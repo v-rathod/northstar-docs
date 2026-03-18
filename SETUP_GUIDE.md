@@ -48,24 +48,42 @@ git clone https://github.com/[your-username]/immigration-insights-app.git
 
 ---
 
+## ⚡ Quick Start (Fastest Path)
+
+**Just want to run the web app?** ✅ Takes 2 minutes:
+
+```bash
+git clone https://github.com/v-rathod/immigration-insights-app.git
+cd immigration-insights-app
+npm install
+npm run dev
+# Open http://localhost:3000 — everything works!
+```
+
+✅ All data is pre-built and committed  
+✅ No secrets or configuration needed  
+✅ 929 tests passing  
+
+**Want the full pipeline (P1→P2→P3)?** See below for complete setup.
+
+---
+
 ## Setup P1 — Horizon (Data Collection)
 
 ```bash
 cd fetch-immigration-data
 
-# Read the vision first
-cat ../northstar-docs/NORTHSTAR_VISION.md
+# Copy environment template (optional, but recommended)
+cp .env.example .env
+# Edit .env with any API keys if you have them (optional)
 
-# Install dependencies
+# Install Python dependencies
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Configure environment (if needed)
-# Copy any .env.example to .env and fill in secrets
-
 # Verify setup
-python3 -c "import pandas; import requests; print('✓ Dependencies OK')"
+python3 -c "import pandas; import requests; print('✓ P1 Dependencies OK')"
 
 # Read project README for next steps
 cat README.md
@@ -78,20 +96,23 @@ cat README.md
 ```bash
 cd ../immigration-model-builder
 
+# Copy environment template (optional, but recommended)
+cp .env.example .env
+# Edit .env with any configuration options (optional)
+
 # Install Python dependencies
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Install any additional ML libraries (if needed)
-pip install pandas parquet xgboost prophet
-
 # Verify setup
-python3 -c "import pandas; import pyarrow.parquet as pq; print('✓ Dependencies OK')"
+python3 -c "import pandas; import pyarrow.parquet as pq; print('✓ P2 Dependencies OK')"
 
 # Read project README for next steps
 cat README.md
 ```
+
+**Note:** P2 expects P1 data in `../fetch-immigration-data/downloads/`. If you haven't run P1 yet, see "Verify End-to-End" section below.
 
 ---
 
@@ -127,8 +148,8 @@ After setting up all three projects:
 # P1: Check that Horizon can run
 cd fetch-immigration-data && python3 scripts/fetch_visa_bulletin.py --help && cd ..
 
-# P2: Check that Meridian data exists
-cd immigration-model-builder && ls artifacts/tables/*.parquet && cd ..
+# P2: Check that Meridian has data (or can generate it)
+cd immigration-model-builder && ls artifacts/tables/*.parquet 2>/dev/null || echo "Run P1 first to generate data" && cd ..
 
 # P3: Check that Compass can build
 cd immigration-insights-app && npm run build && cd ..
@@ -265,6 +286,83 @@ kill -9 <PID>
 
 # Or use a different port
 npm run dev -- -p 3001
+```
+
+---
+
+## ✅ First-Time Setup Checklist
+
+Use this checklist when setting up on a new machine:
+
+### Pre-Setup
+- [ ] Verify system requirements (Git, Python 3.9+, Node.js 18+)
+- [ ] Read [NORTHSTAR_VISION.md](NORTHSTAR_VISION.md) (5 min)
+- [ ] Create workspace: `mkdir -p ~/dev/NorthStar && cd ~/dev/NorthStar`
+
+### P3 Only (Quickest)
+- [ ] Clone P3: `git clone https://github.com/v-rathod/immigration-insights-app.git`
+- [ ] Enter dir: `cd immigration-insights-app`
+- [ ] Install: `npm install`
+- [ ] Run: `npm run dev`
+- [ ] Verify: Visit http://localhost:3000 ✅
+
+### Full Setup (All 3)
+- [ ] Clone all 3 repos (see "Clone All Three Repositories" section)
+- [ ] Setup P1: Python venv + `pip install -r requirements.txt`
+- [ ] Setup P2: Python venv + `pip install -r requirements.txt`
+- [ ] Setup P3: `npm install`
+- [ ] Verify: `npm test` in P3 (should pass all 929 tests)
+- [ ] Verify: P1 script runs: `python3 scripts/fetch_visa_bulletin.py --help`
+- [ ] Verify: P2 data exists: `ls artifacts/tables/*.parquet`
+
+### After Setup
+- [ ] Read [BEST_PRACTICES.md](BEST_PRACTICES.md) before writing code
+- [ ] Jot down your GitHub fork URLs for easy reference
+- [ ] Consider adding `.env` files (copy from `.env.example`—optional)
+- [ ] Join contribution workflow (see project README)
+
+---
+
+## 📦 Large Artifacts & GitHub Releases
+
+### The Problem
+P2 Meridian generates large Parquet files (500MB+) that shouldn't be in Git history. Currently:
+- ✅ P3 (`public/data/`) has pre-built JSON files (~28 MB) → works fine, committed
+- ⚠️ P2 (`artifacts/tables/`) has Parquet files → **should be in GitHub Releases**, not Git
+
+### The Solution
+Large artifacts are stored as GitHub Releases, not committed to the repo:
+
+```bash
+cd immigration-model-builder
+
+# Download latest artifacts from GitHub Release
+./scripts/download-artifacts.sh
+# or manually from: https://github.com/v-rathod/immigration-model-builder/releases
+
+# This pulls ~500 MB of Parquet files locally without bloating the Git repo
+```
+
+### For Contributors Updating Artifacts
+```bash
+# After rebuilding P2 (rebuild_all.py)
+cd immigration-model-builder
+
+# Create new GitHub Release (requires GitHub CLI)
+gh release create v1.1 --notes "April 2026 artifacts"
+gh release upload v1.1 artifacts/tables/*.parquet
+
+# Tag the commit
+git tag v1.1 && git push origin v1.1
+```
+
+### Adding to .gitignore (if not already there)
+```bash
+# immigration-model-builder/.gitignore
+artifacts/tables/*.parquet
+artifacts/tables/*.csv
+artifacts/models/*.pkl
+/data/
 ```
 
 ---
