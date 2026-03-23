@@ -10,18 +10,25 @@
 
 ### Core Program Documents
 
-1. **[NORTHSTAR_VISION.md](NORTHSTAR_VISION.md)** — Program architecture, vision, and design principles
+1. **[GUARDRAILS.md](GUARDRAILS.md)** — **The Ten Commandments** (READ FIRST)
+   - Non-negotiable architectural constraints for the entire program
+   - No-backend architecture, $5/month cost constraint, unidirectional data flow
+   - Mandatory testing, regression test requirements, data contract protection
+   - Program-level guardrails: architecture, data quality, testing, security, git workflow
+   - Cross-references to project-specific guardrails in P1, P2, P3
+
+2. **[NORTHSTAR_VISION.md](NORTHSTAR_VISION.md)** — Program architecture, vision, and design principles
    - Overview of Horizon (P1), Meridian (P2), Compass (P3)
    - Data flow: collection → analytics → web
    - Design guardrails and non-negotiables
    
-2. **[BEST_PRACTICES.md](BEST_PRACTICES.md)** — Engineering conventions across all 3 projects
+3. **[BEST_PRACTICES.md](BEST_PRACTICES.md)** — Engineering conventions across all 3 projects
    - TypeScript strict mode, security standards
    - Testing strategy, code review checklist
    - Agent workflow guidelines
    - Data validation rules
 
-3. **[SETUP_GUIDE.md](SETUP_GUIDE.md)** — How to set up all 3 projects locally
+4. **[SETUP_GUIDE.md](SETUP_GUIDE.md)** — How to set up all 3 projects locally
 
 ---
 
@@ -119,10 +126,12 @@ P1 Horizon         P2 Meridian           P3 Compass
 
 All contributors must:
 
-1. ✅ Read [NORTHSTAR_VISION.md](NORTHSTAR_VISION.md) — understand the big picture
-2. ✅ Read [BEST_PRACTICES.md](BEST_PRACTICES.md) — follow engineering standards
-3. ✅ Read the project-specific README — understand your component
-4. ✅ Follow the agent workflow checklist — if using AI agents
+1. ✅ Read [GUARDRAILS.md](GUARDRAILS.md) — **The Ten Commandments** (non-negotiable rules)
+2. ✅ Read [NORTHSTAR_VISION.md](NORTHSTAR_VISION.md) — understand the big picture
+3. ✅ Read [BEST_PRACTICES.md](BEST_PRACTICES.md) — follow engineering standards
+4. ✅ Read the project-specific `GUARDRAILS.md` — understand your component's rules
+5. ✅ Read the project-specific README — understand your component
+6. ✅ Follow the agent workflow checklist — if using AI agents
 
 For Pull Requests: See [BEST_PRACTICES.md#code-review](BEST_PRACTICES.md) for pull request requirements.
 
