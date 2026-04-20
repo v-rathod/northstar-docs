@@ -329,6 +329,40 @@ All artifacts exported to P3 must:
 3. Use field names matching the TypeScript interfaces in `src/types/p2-artifacts.ts`
 4. Be documented in `artifacts/metrics/FINAL_SINGLE_REPORT.md`
 
+### 3.6 CRITICAL: Raw vs Computed Artifacts — NEVER Confuse Them
+
+**The P2 visa bulletin pipeline has TWO separate tables:**
+
+| Table | Columns | Purpose |
+|---|---|---|
+| `fact_cutoffs_all.parquet` | 10 cols (raw) | Source of truth — parsed PDF data |
+| `fact_cutoff_trends.parquet` | 14 cols (computed) | P3 export — adds velocity metrics |
+
+**`fact_cutoff_trends` adds 6 computed columns that MUST exist for P3 to work:**
+- `velocity_3m`, `velocity_6m` — drives "+NaN days/month" display if missing
+- `monthly_advancement_days` — movement calculation
+- `retrogression_flag`, `retrogression_count_cum` — retrogression tracking
+- `queue_position_days` — priority date calculations
+
+**NEVER copy `fact_cutoffs_all` directly to `fact_cutoff_trends`.**
+
+**Correct update workflow when adding a new bulletin month:**
+```bash
+# 1. Append raw data to fact_cutoffs_all
+python3.12 scripts/append_may2026_bulletin.py
+
+# 2. Rebuild computed table (MANDATORY — the script now does this automatically)
+python3.12 scripts/make_fact_cutoff_trends.py
+
+# 3. Export to P3
+# (done by append script or: python3.12 -c "export fact_cutoff_trends to JSON")
+
+# 4. Validate (these tests will catch the regression)
+python3.12 -m pytest tests/p3_metrics/test_fact_cutoff_trends.py -v
+```
+
+**Test guardrail:** `tests/p3_metrics/test_fact_cutoff_trends.py::test_fact_cutoff_trends_artifact_has_computed_columns` will FAIL if the computed table is replaced with raw data. This is intentional.
+
 ---
 
 ## 4. P1 Horizon — Python / Requests / Data Collection
