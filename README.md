@@ -96,20 +96,21 @@ P1 Horizon         P2 Meridian           P3 Compass
 
 ---
 
-## 📊 Current Status (as of Mar 17, 2026)
+## 📊 Current Status (as of Mar 25, 2026)
 
 | Component | Status | Version | Tests |
 |-----------|--------|---------|-------|
 | P1 Horizon | ✅ Live | Apr 2026 VB ingested | N/A |
 | P2 Meridian | ✅ Live | April 2026 artifacts | N/A |
-| P3 Compass | ✅ Live | Milestone 10.72 | **929 passing** (31 files) |
+| P3 Compass | ✅ Live | Milestone 21.0 | **1,265 passing** (42 files) |
 
 **Highlights:**
 - ✅ P1→P2→P3 end-to-end pipeline operational
 - ✅ All 9 dashboards live on Compass
-- ✅ 929 regression + live-data tests passing
+- ✅ 1,265 regression + live-data tests passing
 - ✅ SEO optimized (favicon, OG image, JSON-LD, canonical URLs)
 - ✅ Deployed to AWS CloudFront (~$1-3/month)
+- ✅ Prod: immigrationcompass.fyi | Stage: stage.immigrationcompass.fyi
 
 ---
 

@@ -62,7 +62,7 @@ npm run dev
 
 ✅ All data is pre-built and committed  
 ✅ No secrets or configuration needed  
-✅ 929 tests passing  
+✅ 1,265 tests passing  
 
 **Want the full pipeline (P1→P2→P3)?** See below for complete setup.
 
@@ -311,7 +311,7 @@ Use this checklist when setting up on a new machine:
 - [ ] Setup P1: Python venv + `pip install -r requirements.txt`
 - [ ] Setup P2: Python venv + `pip install -r requirements.txt`
 - [ ] Setup P3: `npm install`
-- [ ] Verify: `npm test` in P3 (should pass all 929 tests)
+- [ ] Verify: `npm test` in P3 (should pass all 1,265 tests)
 - [ ] Verify: P1 script runs: `python3 scripts/fetch_visa_bulletin.py --help`
 - [ ] Verify: P2 data exists: `ls artifacts/tables/*.parquet`
 

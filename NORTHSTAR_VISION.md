@@ -44,10 +44,10 @@ NorthStar is composed of three independent but tightly connected projects that f
 │   "The analytical backbone — curates, measures, models"         │
 │                                                                 │
 │   • 4-stage pipeline: curate → features → models → export      │
-│   • 46+ Parquet tables (18.5M+ rows)                            │
+│   • 46+ Parquet tables (23M+ rows)                              │
 │   • 6 dimensions, 18 fact tables, 14 feature tables             │
 │   • 3 model outputs (PD forecasts, SRS scores, salary profiles) │
-│   • RAG: 341 chunks + 684 QA pairs for search                  │
+│   • RAG: 341 chunks + 719 QA pairs for search                  │
 │   • Outputs: artifacts/ (Parquet, JSON, YAML)                   │
 │                                                                 │
 └──────────────────────────┬──────────────────────────────────────┘
@@ -181,7 +181,7 @@ Given the same P1 data, P2 produces identical artifacts. Given the same P2 artif
 | Language | Python 3.12 | Python 3.12 | TypeScript 5 (strict) |
 | Framework | Scripts | Pipeline CLI | Next.js 16 (App Router) |
 | Data Format | Raw (PDF/Excel/CSV) | Parquet + JSON | JSON (static) |
-| Testing | pytest | pytest (349+ tests) | Vitest (545+ tests) |
+| Testing | pytest | pytest (655+ tests) | Vitest (1,302+ tests) |
 | Key Libs | requests, selenium, PyPDF2 | pandas, pyarrow, pdfplumber | Tailwind, Recharts, Framer Motion |
 | Hosting | Local only | Local only | AWS S3 + CloudFront |
 | Cost | $0 | $0 | $1-3/month |
@@ -195,12 +195,12 @@ Given the same P1 data, P2 produces identical artifacts. Given the same P2 artif
 | Government data sources | 15 active |
 | Raw data files | 1,230+ |
 | Curated tables | 46+ |
-| Total rows processed | 18.5M+ |
+| Total rows processed | 23M+ |
 | ML model outputs | 3 (PD forecasts, SRS, salary profiles) |
 | Interactive dashboards | 8 |
 | RAG search chunks | 341 |
-| Pre-computed QA pairs | 684 |
-| Test coverage | 900+ tests across all projects |
+| Pre-computed QA pairs | 719 |
+| Test coverage | 1,979+ tests across all projects |
 | Monthly AWS cost | ~$1-3 |
 
 ---
