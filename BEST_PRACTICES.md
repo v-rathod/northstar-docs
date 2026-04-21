@@ -485,12 +485,44 @@ S3 bucket (static site)  ← out/ from `next build`
 
 **No Lambda, no database, no API Gateway, no server** — the entire backend is a static file bucket.
 
-**Deploy commands:**
-```bash
-npm run build                                           # → out/
-aws s3 sync out/ s3://BUCKET_NAME --delete             # deploy
-aws cloudfront create-invalidation --distribution-id DIST_ID --paths "/*"
+### Deployment Workflow (Critical — Read Before Every Deploy)
+
 ```
+local dev  →  bash scripts/deploy.sh --env stage  →  test  →  bash scripts/promote-to-prod.sh
+```
+
+**NEVER re-run `deploy.sh --env prod` after stage is verified.**  
+Use `promote-to-prod.sh` which does S3-to-S3 server-side copy — no rebuild, no local upload, essentially free.
+
+```bash
+# Stage deploy (rebuild + upload)
+bash scripts/deploy.sh --env stage
+
+# Production deploy (server-side copy from stage — PREFERRED)
+bash scripts/promote-to-prod.sh
+```
+
+### Employer Shard Cost Model (95K files, ~1.1GB)
+
+The 95,153 employer shards are the most expensive part of deployment.
+
+| Scenario | Cost | When to use |
+|----------|------|-------------|
+| Code-only change (no P2 data change) | **$0.00** | Hash unchanged → skip |
+| P2 employer data changed (new wages, SRS) | **~$0.50** | Hash changed → sync only changed shards via `--size-only` |
+| `--force-shards` override | **~$0.50** | When hash is correct but you need to force |
+| `promote-to-prod.sh` (stage → prod) | **~$0.00** | S3-to-S3 copy, same region, essentially free |
+
+**How it works:**
+1. `deploy.sh` computes SHA-256 of `_search.json` and compares to hash stored in `s3://bucket/data/employers/.shard-hash`
+2. Match → skip all 95K shard uploads (fastest, $0.00)
+3. No match → `aws s3 sync --size-only`: only uploads shards whose file size changed
+4. `consolidate_employer_shards()` now compares new vs existing content before writing — unchanged shards keep their old timestamps, making `--size-only` even more effective
+
+**Rules:**
+- Never use `--force-shards` unless P2 employer data changed (new wages, new SRS scores)
+- Code changes (UI fixes, new components) → deploy normally, hash check will skip shards
+- After running `sync_p2_data.py` with new P2 data → `_search.json` hash will change → shards sync automatically
 
 ---
 

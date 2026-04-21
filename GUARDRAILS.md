@@ -161,6 +161,8 @@ The repo is the single source of truth. If it isn't committed, it didn't happen.
 | G4 | Deploy only via `bash scripts/deploy.sh` (never raw `aws s3 sync`) | P3 | Deploy script |
 | G5 | No destructive operations without user confirmation (force push, drop table, rm -rf) | All | Agent safety |
 | G6 | Cross-project changes require coordinated commits | All | Data contract awareness |
+| G7 | **Prod must be promoted from stage, never re-deployed from local** — use `bash scripts/promote-to-prod.sh`. This uses S3-to-S3 server-side copy (no local download, essentially free). Never re-run `deploy.sh --env prod` after stage is verified. | P3 | Deploy discipline |
+| G8 | **Never use `--force-shards` unless P2 employer data actually changed** — shard uploads cost ~$0.50. Use `--force-shards` only when `sync_p2_data.py` regenerated shards with new P2 data (new wages, new SRS scores). Code-only changes (component fixes, UI features) do not need `--force-shards`. | P3 | Cost control |
 
 ### UI & Design Guardrails (P3 Only)
 
